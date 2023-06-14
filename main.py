@@ -4,29 +4,38 @@ import math
 import utils
 pygame.font.init()
 
+#scales the grass and track image relative to the screen
 GRASS = utils.scale_image(pygame.image.load("Assets/grass.jpg"), 2)
 TRACK = utils.scale_image(pygame.image.load('Assets/track-border1.png'), 0.68)
 
-
+#scale the track border image
 TRACK_BORDER = utils.scale_image(pygame.image.load("Assets/track-border.png"), 0.68)
+#creates a mask for the border -- car can not exceed this border
 TRACK_BORDER_MASK = pygame.mask.from_surface(TRACK_BORDER)
 
+#scale finish line image 
 FINISH = utils.scale_image(pygame.image.load("Assets/finish.jpg"), 0.10)
+#creates a mask for the finish line -- can detect when car exceeds finish line
 FINISH_MASK = pygame.mask.from_surface(FINISH)
+#positions the finish line image in the correct position
 FINISH_POSITION = (100, 230)
 
+#scale pink and blue car so it is releatively proportionate in the screen
 PINK_CAR = utils.scale_image(pygame.image.load("Assets/car1.png"), 0.06)
 BLUE_CAR = utils.scale_image(pygame.image.load("Assets/car2.png"), 0.01499375)
 
+#set width and height of screen which will be the same as height and width of track image
 WIDTH, HEIGHT = TRACK.get_width(), TRACK.get_height()
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Le Jeu de Course!")
 
+#type of font displayed on screen
 MAIN_FONT = pygame.font.SysFont("Algerian", 25)
 
 FPS = 60
 PATH = [(137, 129), (100, 59), (45, 128), (53, 364), (262, 555), (305, 511), (325, 392), (379, 365), (447, 398), (463, 528), (556, 528), 
         (554, 308), (299, 240),  (528, 190), (558, 143), (541, 65), (228, 69), (209, 114), (206, 289), (144, 295)]
+#path for the track to follow
 # PATH = [(175, 119), (110, 70), (56, 133), (70, 481), (318, 731), (404, 680), (418, 521), (507, 475), (600, 551), (613, 715), (736, 713),
 #         (734, 399), (611, 357), (409, 343), (433, 257), (697, 258), (738, 123), (581, 71), (303, 78), (275, 377), (176, 388), (178, 260)]
 
@@ -43,7 +52,7 @@ class GameInfo:
     def next_level(self):
         self.level += 1
         self.started = False
-        # this is because if we are going to the next level then we dont want ot start the next level yet we need to wait for the user to do that 
+        # this is because if we are going to the next level then we dont want to start the next level yet we need to wait for the user to do that 
 
     def reset(self):
         # this will allow us to reset everything
@@ -53,6 +62,7 @@ class GameInfo:
 
     def game_finished(self):
         return self.level > self.LEVELS
+        #max levels are reached
 
     def start_level(self):
         self.started = True
@@ -67,6 +77,7 @@ class GameInfo:
 
 class AbstractCar:
     def __init__(self, max_vel, rotation_vel):
+        #starting values assigned to attributes for self object
         self.img = self.IMG
         self.max_vel = max_vel
         self.vel = 0.6
@@ -105,10 +116,10 @@ class AbstractCar:
 
         self.y -= vertical
         self.x -= horizontal
-        # if this value is negative, we dont want bthe carf to mmove backwards therefore the restriction is 0
+        # if this value is negative, we dont want the car to move backwards therefore the restriction is 0
 
 # we put this in Abstract car class because this is both going to be for the computer and player my player
-    def collide(self, mask, x=0, y=0): #***
+    def collide(self, mask, x=0, y=0): 
         # mask meaning we are going to pass some other mask here, we will generate a mask for our own image
         #will have the x and y of the other mask? we obviously already have the x and y of the other car. We will determine if two masks are colliding in here
         car_mask = pygame.mask.from_surface(self.img)
@@ -134,10 +145,12 @@ class PlayerCar(AbstractCar):
     def reduce_speed(self):
         self.vel = max(self.vel - self.acceleration / 2, 0)
         self.move()
-    #the class car does need to be able to reduce its speed the whole time and so its speed its going to be the same speed the entire time and so it make sense to have this class where its going to be used becasue its not going to be used by anything else that implements the abstact colour class
+    #the class car does need to be able to reduce its speed the whole time as its generally going to stay consistent throughout hte car race hence
+    #we have a max velocity (makes it easier for the car to move around through the track)
 
     def bounce(self):
         self.vel = -self.vel
+        #direction will change such that car moves backwards instead of forwards
         self.move()
 
 class ComputerCar(AbstractCar):
@@ -186,7 +199,8 @@ class ComputerCar(AbstractCar):
             #it is lower down in the screen meaning we have to go down
             desired_radian_angle += math.pi
             # we have to make it so it is always an acute angle since it is the most efficient to get to that position
-            # however, if the target that we are looking for is lower down on the screen than where the current car position is, the turn we need to make is more extreme than what the angle is (for example we are getting an angle of 25 degrees and to make it point down we have to ADD 180 degrees to it)
+            # however, if the target that we are looking for is lower down on the screen than where the current car position is, 
+            # the turn we need to make is more extreme than what the angle is (for example we are getting an angle of 25 degrees and to make it point down we have to ADD 180 degrees to it)
 
         difference_in_angle = self.angle - math.degrees(desired_radian_angle)
         # we take whatever our current angle is and subtract it by whatever the desired angle is to get to and then based off whether if this number is positive or negative we are going to know if we have to move LEFT OR RIGHT
@@ -259,18 +273,22 @@ def move_player(player_car):
     moved = False
     if keys[pygame.K_a]:
         player_car.rotate(left=True)
-         # if we press the w key we dont want it to slow down (if we dont press it we want to)
+         # rotate car to the left
     if keys[pygame.K_d]:
         player_car.rotate(right=True)
+        # rotate car to the right
     if keys[pygame.K_w]:
         moved = True
-        player_car.move_forward()        
+        player_car.move_forward()     
+        # move car forward   
     if keys[pygame.K_s]:
         moved = True
         player_car.move_backward()
+        #move car backward
 
     if not moved:
         player_car.reduce_speed()
+        #if we don't move any keys, car will make it to a stop 
 
 def handle_collision(player_car, computer_car, game_info):
     if player_car.collide(TRACK_BORDER_MASK) != None:
@@ -285,7 +303,7 @@ def handle_collision(player_car, computer_car, game_info):
         computer_car.reset()
 
     player_finish_poi_collide = player_car.collide(FINISH_MASK, *FINISH_POSITION)
-    #with a "*" since what this does is split the tuple that is storing this position (x and y) into two individual coordinates and passes this to the function as TWO ARGUEMENTS
+   # checks if player car crosses the finish line
     if player_finish_poi_collide != None:
         # print(finish_poi_collide)
         if player_finish_poi_collide[1] == 0:
