@@ -14,3 +14,6 @@ The main features this game are:
 ## Screenshots
 ![car-racing-game-1](https://github.com/rbrueda/car-racing-game/assets/93105329/496d42d7-cf39-411e-ba8a-80c7844b20b3)
 ![car-racing-game-2](https://github.com/rbrueda/car-racing-game/assets/93105329/0ec0b747-2c72-4367-be92-24a4e34ddb2a)
+
+##French Final Project Video
+https://youtu.be/T684qK39pR4
