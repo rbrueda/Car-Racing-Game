@@ -1,4 +1,4 @@
-# car-racing-game
+# Car-Racing-Game
 
 This interactive two-dimensional game is built using the programming language Python, more specficially, using the library Pygame. The game's objective is to race a computer-controlled car while the user uses the keyboard controls to move their car. The purpose of this project was for an independent study unit for my Grade 12 French class, in which we were tasked to learn/create something by ourselves. Due to my interest in learning more about Python, I followed Tech With Tim's series in "Car Racing Game using pygame" to help me develop this game. \
 The main features this game are: 
